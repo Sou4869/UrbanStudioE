@@ -1,10 +1,10 @@
 # UrbanStudioE
 
-Course datasets, QGIS projects, and reproducible analyses for Transportation and Urban Studio E.
+Kannai route-choice data, QGIS projects, and reproducible analyses for Transportation and Urban Studio E.
 
 ## Project structure
 
-- `datasets/`: source CSVs, dataset descriptions, papers, and GIS layers for the six case studies.
+- `datasets/routechoice/`: source CSVs, dataset descriptions, and GIS layers for the Kannai route-choice case study.
 - `TU_StudioE_QGISProject.qgz`: the original QGIS project.
 - `work/routechoice/`: route-choice analysis scripts and intermediate data.
 - `outputs/routechoice/`: Kannai visibility maps, route comparisons, a GeoPackage, and a QGIS project.
@@ -50,6 +50,6 @@ Make that package available to Node before running the builder. The local `node_
 
 ## Source material
 
-Consult the dataset descriptions and source files in each dataset directory for provenance and interpretation. Referenced papers and datasets retain their original authorship and applicable terms.
+Consult the dataset description in `datasets/routechoice/` for provenance and interpretation. Referenced papers and datasets retain their original authorship and applicable terms.
 
 Local dependencies, caches, temporary inspection files, and operating-system metadata are excluded through `.gitignore`. Analysis results are tracked alongside the code.
