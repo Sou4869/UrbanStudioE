@@ -9,6 +9,7 @@ Kannai route-choice data, QGIS projects, and reproducible analyses for Transport
 - `work/routechoice/`: route-choice analysis scripts and intermediate data.
 - `outputs/routechoice/`: Kannai visibility maps, route comparisons, a GeoPackage, and a QGIS project.
 - `outputs/routechoice/step1/`: comparisons of all chosen routes with their corresponding shortest routes, summarized by OD pair.
+- `outputs/routechoice/step2/`: Pearson/Spearman correlations, variable-quality checks, and collinearity diagnostics.
 
 ## Kannai route-choice analysis
 
@@ -47,6 +48,24 @@ node work/routechoice/build_step1_workbook.mjs
 Make that package available to Node before running the builder. The local `node_modules` link is machine-specific and is excluded from Git. The exported workbook is included in the repository and can be opened without the authoring runtime.
 
 `work/routechoice/build_maps.py` creates the map and QGIS outputs and requires the QGIS Python environment. Its QGIS application location is configured for macOS QGIS-LTR; adjust it for another installation.
+
+## Step 2: variable overlap
+
+Step 2 compares street attributes across 1,199 physical segments, 2,398 directed links, all 1,280 chosen routes, and variation within each OD pair. It also checks link-additive exposures for model preparation and repeats the core collinearity check with equal weights on the 677 distinct routes.
+
+Greenery and sidewalk width correlate strongly across pooled chosen routes (Pearson r = 0.804), but less strongly after removing each OD mean (r = 0.494). Green and sky visibility have a within-OD correlation of 0.151. Building visibility overlaps strongly with greenery (within-OD r = -0.810).
+
+For the five core additive attributes (distance, sidewalk exposure, crosswalk count, green exposure, and sky exposure), within-OD VIFs range from 1.175 to 1.335. The distinct-route sensitivity yields VIFs from 1.220 to 1.290. Retain these five attributes for the first model sequence and test building visibility in a separate sensitivity specification. No raw variables are removed.
+
+These are descriptive diagnostics on chosen routes. They do not establish preference, causation, or identification of a future model over all feasible alternatives. Inspect the actual estimation design again in Step 3.
+
+```sh
+python3 work/routechoice/analyze_step2.py
+python3 work/routechoice/analyze_step2.py --plot
+node work/routechoice/build_step2_workbook.mjs
+```
+
+Dependencies are the same as for Step 1. Methods, exposure units, screening flags, and source references are documented in `outputs/routechoice/step2/README.txt`. The Excel workbook is a snapshot of the Python calculations.
 
 ## Source material
 

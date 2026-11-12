@@ -20,6 +20,7 @@ __pycache__/
 work/**/mpl/
 work/**/*_preview.png
 work/**/*_inspect.ndjson
+*.xlsx.inspect.ndjson
 
 # QGIS backups and transient database files
 *.qgz~
