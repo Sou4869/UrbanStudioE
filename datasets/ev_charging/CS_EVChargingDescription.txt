@@ -1,0 +1,124 @@
+Sequential EV charging choices
+Transportation and Urban Studio E
+Dataset description | Prepared 10 November 2026
+
+Context
+-------
+This case study examines two sequential decisions by Belgian drivers: purchasing a residential electric-vehicle charger with flexibility features, and enrolling in a smart-charging service managed by an energy retailer. Installing suitable hardware and delegating charging control are distinct behavioral decisions. The study embeds two sequential discrete choice experiments in one survey. [1-4]
+
+Data Collection
+---------------
+The authors describe an online survey of Belgian drivers conducted in July-August 2024 in Dutch, French and English, with 769 valid respondents. The local IRW tables contain these same 769 IDs in both experiments. Most do not currently drive an EV: cov_drives_ev is Yes for 67 respondents and No for 702. Thus, the local sample should not be described as consisting entirely of current EV drivers. [1-4; local counts]
+
+Two-stage choice structure
+--------------------------
+ | Stage 1: charger purchase | Stage 2: service participation
+Decision | Which residential charger to purchase/install? | Which retailer-managed charging service to accept?
+Alternatives | Charger 1; Charger 2; keep the current charger. | Agreement 1; Agreement 2; no agreement (retain own control).
+Tasks per person | 8 | 4
+Attributes | 6 charger attributes | 5 service attributes
+Choice situations | 6,152 = 769 x 8 | 3,076 = 769 x 4
+Stored profile rows | 12,304 = 6,152 x 2 | 6,152 = 3,076 x 2
+CSV columns | 20 | 20
+
+Sequential design: the purchase experiment comes first, followed by the service experiment for the same respondents. The service CSV includes all 769 respondents, including those who opt out of purchase tasks. Its sample is not a subset selected by an observed purchase decision. [1, 2; local verification]
+
+Files: ev_charger_purchase.csv and ev_charging_service.csv. Both are comma-delimited and use long format: one row per respondent, task and displayed profile.
+
+
+
+Variables: stage identifiers and choice coding
+----------------------------------------------
+Name | Description
+id | Respondent ID shared across the two experiments.
+task | Task number within the experiment: 1-8 for purchase, 1-4 for service.
+profile | Displayed alternative number: 1 or 2. No explicit opt-out row.
+choice | 1 if this profile is selected, 0 otherwise. Within (id, task), (1,0) selects profile 1, (0,1) selects profile 2, and (0,0) is opt-out.
+trial_version | Stage-specific design version/block, 1-5. Its value differs across the two files for 616 of the 769 respondents.
+
+Stage 1: charger-purchase attributes
+------------------------------------
+Name | Meaning and observed levels
+attr_smart_charging | Control: none (charge on plugging in); energy retailer; smart home management system; user via smartphone.
+attr_solar_charging | Solar-charging feature: Yes / No.
+attr_two_way_charging | Bidirectional charging: None; Vehicle to home; Vehicle to home and grid.
+attr_peak_management | Peak-use management: Yes / No.
+attr_reward | Annual reward: EUR 30, 290, 550 or 810. Labels also show ten-year totals (EUR 300, 2900, 5500, 8100).
+attr_price | Charger price: EUR 300, 1600, 2900 or 4200.
+
+Stage 2: service-agreement attributes
+-------------------------------------
+Name | Meaning and observed levels
+attr_minimum_battery_level | Minimum battery level: 0%, 10%, 30% or 50%. Labels include illustrative Nissan Leaf ranges of 28, 83 or 138 km for nonzero levels.
+attr_portable_power_bank | Portable power bank provision: Yes / No.
+attr_emergency_roadside_assistance | Emergency roadside assistance: Yes / No.
+attr_charging_data_security | Charging-data security provision: Yes / No.
+attr_monthly_fee | Monthly fee: EUR 0, 10, 30 or 50. Labels also give annual equivalents (EUR 0, 120, 360, 600).
+
+Attribute labels are strings, not numeric codes. When extracting money amounts, use a consistent period: annual reward, one-off charger price and monthly service fee are different quantities.
+
+
+
+Variables: respondent characteristics
+-------------------------------------
+Name | Description / coding
+cov_age | Age in years; local range 18-86.
+cov_woman | Woman indicator: 1 / 0.
+cov_education | Education category: primary or none; lower secondary; higher secondary; bachelor-level higher education; master-level or higher graduate education.
+cov_income_band | Income band as supplied, from Less than 15000 to 105000 or more. The IRW table page does not specify household versus individual income, or gross versus net; verify the survey instrument before monetary interpretation.
+cov_region | Belgian region: Flanders, Wallonia or Brussels.
+cov_language | Survey language: Nederlands, Français or English.
+cov_drives_ev | Currently drives an electric vehicle: Yes / No.
+cov_daily_drive_km | Reported daily driving distance, in kilometers.
+cov_duration_sec | Survey completion duration, in seconds.
+cov_ex2_straightline_flag | Service file only: 1 for a respondent flagged for straight-line responses in experiment 2; 0 otherwise. Ten respondents are flagged and remain in the file.
+
+The nine shared covariates have identical values by id across the two local files. Respondent characteristics are repeated on all profile rows; summarize each respondent once.
+
+Descriptive statistics
+----------------------
+Variable (one row per ID) | N | Min | Max | Mean | SD
+cov_age | 769 | 18 | 86 | 50.83 | 16.15
+cov_woman | 769 | 0 | 1 | 0.53 | 0.50
+cov_daily_drive_km | 769 | 0 | 1000 | 38.17 | 60.31
+cov_duration_sec | 769 | 846 | 266806 | 3397.46 | 12998.95
+
+SD is the sample standard deviation. The large maxima for daily driving and survey duration are retained as supplied; assess them before applying any exclusion rule.
+
+Outcome | Purchase: N (%) | Service: N (%)
+Profile 1 | 2,454 (39.9%) | 859 (27.9%)
+Profile 2 | 2,293 (37.3%) | 917 (29.8%)
+Opt-out | 1,405 (22.8%) | 1,300 (42.3%)
+Total choice situations | 6,152 (100%) | 3,076 (100%)
+
+Shares use choice situations as denominators. The two rows within each task are alternatives in a single choice, not two independent binary decisions. Rounded percentages need not sum to exactly 100%.
+
+
+
+Linking and modeling the two stages
+-----------------------------------
+Use id to link respondents. A task in stage 1 has no one-to-one pairing with a task bearing the same number in stage 2. If stacking files, create an experiment/stage indicator and use (stage, id, task, profile) as the row key. Do not join the full tables on id alone: doing so creates a many-to-many product of tasks.
+
+Preserve each stage's opt-out. In purchase tasks it means keeping the current charger; in service tasks it means refusing both contracts and retaining control. Add an explicit third alternative if required by the estimation software. For each task, its choice indicator is 1 - sum(choice) over the two stored profiles. Specify its utility and baseline attributes from the experimental design; do not automatically copy an offered profile.
+
+Represent the sequence in the analysis. Separate models can first describe each decision. A linked model can relate preferences or latent membership across stages using the shared respondent ID. Any purchase-conditioned prediction or weighting rule must be stated explicitly; it is not an observed sample-selection rule in these CSVs.
+
+Keep repeated choices from the same person together when splitting training and validation samples, and account for respondent-level dependence in inference. Shared covariates require interactions or a class-membership specification to affect alternative choice; a common additive term cancels within a choice set.
+
+Provenance and version notes
+----------------------------
+The local files use descriptive filenames for the IRW tables linked in sources.txt: ev_charger_purchase.csv corresponds to the purchase table [1], and ev_charging_service.csv to the service table [2]. The CSV contents are unchanged by this renaming. IRW cites the original Mendeley deposit pgrgnctxjf. A later author deposit, 7s9hgzb2cw (2 November 2026), provides additional documentation of the sequential design. It is a separate release; its existence does not establish that the local CSVs incorporate its revisions. [1-4]
+
+The IRW service page calls the sample "EV drivers", but the local cov_drives_ev values include 702 non-EV drivers. This description follows the authors' broader "Belgian drivers" wording and reports the actual local coding. Both IRW tables and the cited Mendeley deposits indicate CC BY 4.0. [1-4]
+
+References and sources
+----------------------
+[1] Item Response Warehouse. fowler_2026_pev_charger_purchase: table description, opt-out convention and provenance.https://itemresponsewarehouse.org/tables/fowler_2026_pev_charger_purchase/
+
+[2] Item Response Warehouse. fowler_2026_pev_charger_service: sequential experiment, opt-out and straight-line flag.https://itemresponsewarehouse.org/tables/fowler_2026_pev_charger_service/
+
+[3] Fowler, B., van Passel, S. and Lizin, S. (2026). Replication Data and Code for From Purchase to Participation: Sequential Choice Experiments on PEV Smart-Charging. Original Mendeley deposit, version 1.https://doi.org/10.17632/pgrgnctxjf.1
+
+[4] Fowler, B. (2026). Revisions.2: From Purchase to Participation: Sequential Choice Experiments on PEV Smart-Charging. Separate revised deposit, version 1.https://doi.org/10.17632/7s9hgzb2cw.1
+
+Source pages checked on 10 November 2026. Counts and descriptive statistics refer to the local CSV files, excluding headers. This teaching description was prepared from the cited sources and local file inspection; it is not an author-supplied codebook.

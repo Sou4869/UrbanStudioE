@@ -1,0 +1,61 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Bold;\f1\fnil\fcharset0 HelveticaNeue;\f2\fswiss\fcharset0 Helvetica;
+}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww20340\viewh11580\viewkind0
+\deftab560
+\pard\pardeftab560\partightenfactor0
+
+\f0\b\fs40 \cf0 README Perceived Safety Choices data\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab560\pardirnatural\partightenfactor0
+
+\f1\b0\fs26 \cf0 \
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf0 *** rating_dataset_perceivedSafetyChoices.csv\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab560\pardirnatural\partightenfactor0
+
+\f2\fs24 \cf0 Variable Name: "Description" TYPE \{LEVELS IF STRING\}
+\f1\fs26 \
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf0 pid: \'93The person id\'94 INTEGER\
+tmode: \'93the transport mode that was evaluated\'94 STRING \{car, ebike, escoot, walk\}\
+psafe: \'93Perceived safety rate\'94 INTEGER \{1, 2, 3, 4, 5, 6, 7\}\
+type: \'93the road infrastructure type\'94 INTEGER \{1: unidirectional urban road (50 km/h speed limit), no cycle lane and sidewalks < 1.5 m wide, 2: unidirectional urban road (50 km/h speed limit), no cycle lane and sidewalks \uc0\u8805  1.5 m wide, 3: unidirectional urban road (50 km/h speed limit) with cycle lane, 4: shared space (30 km/h speed limit)\}\
+pav: \'93pavement condition\'94 INTEGER \{0: bad condition, 1: good condition\}\
+obstacles: \'93obstacles existence\'94 INTEGER \{0: no obstacles, 1: many obstacles\}\
+\'93zebra\'94 pedestrian crossings: INTEGER \{0: without \'93zebra\'94 pedestrian crossings, absence of road markings, 1: with \'93zebra\'94 pedestrian crossings not controlled by traffic lights, 2:  with \'93zebra\'94 pedestrian crossings controlled by traffic lights\}\
+veh: \'93motorized vehicle density is veh/km/lane\'94 FLOAT\
+bike: \'93two wheelers density in bikes/km/lane\'94 FLOAT\
+ped: \'93pedestrians in the road environment of 3500 m^2\'94 INTEGER\
+type1: \'93binary variable for road infrastructure type 1\'94 INTEGER\
+type2: \'93binary variable for road infrastructure type 2\'94 INTEGER\
+type3: \'93binary variable for road infrastructure type 3\'94 INTEGER\
+type4: \'93binary variable for road infrastructure type 4\'94 INTEGER\
+cross1: \'93binary variable for pedestrian crossing level 1\'94 INTEGER\
+cross1: \'93binary variable for pedestrian crossing level 2\'94 INTEGER\
+gender: \'93the gender group of the respondent\'94 INTEGER \{0: male, 1: female\}\
+age: \'93the age groups of the respondent:\'94 INTEGER \{1: < 18, 2: 18-30, 3: 31-40, 3: 41-50, 5: 50-65, 6: 65+\}\
+education: \'93education level of the respondent\'94 INTEGER \{0: no education, 1: primary, 2: secondary, 3: higher, 4: master\}\
+employment: \'93employment status of the respondent\'94 INTEGER \{0: inactive, 1: student, 2: unemployed, 3: active\}\
+income: \'93income level of the respondent\'94 INTEGER \{0: no income, 1: <750 euros/month, 2: 750-1500 euros/month, 3: 1500-2500 euros/month, 4: >= 2500 euros/month\}\
+car_own: \'93car ownership\'94 INTEGER \{0: no car, 1: at least one car\}\
+moto_own: \'93motorcycle ownership\'94 INTEGER \{0: no motorcycle, 1: at least one motorcycle\}\
+cycle_own: \'93bicycle or e-bike ownership\'94 INTEGER \{0: no bicycle or e-bike, 1: at least one bicycle or e-bike\}\
+escoot_own: \'93e-scooter ownership\'94 INTEGER \{0: no car, 1: at least one e-scooter\}\
+young: \'93binary variable of age\'94 INTEGER \{0: not young, 1: young, less than 30 years old\}\
+city: \'93the city of the respondent\'94 STRING\
+\
+*** choice_dataset_perceivedSafetyChoices.csv\
+Variable Name: "Description" TYPE \{LEVELS IF STRING or INTEGER\}\
+pid: \'93The person id\'94 INTEGER\
+choice: \'93The selected transport mode\'94 STRING \{car, ebike, escoot, walk\}\
+cartime: \'93The travel time by private car\'94 FLOAT\
+acttime: \'93The base travel time using alternative modes. To define e-bike time, multiply by 1, for e-scooter, multiply by 4/3, and for walk, multiply by 4. FLOAT\
+ebikecost: \'93The cost of using a shared e-bike in euros\'94 FLOAT\
+escootcost: \'93The cost of using a shared e-scooter in euros\'94 FLOAT\
+carpsafe: \'93Perceived safety rate for driving a car\'94 INTEGER \{1, 2, 3, 4, 5, 6, 7\}\
+ebikepsafe: \'93Perceived safety rate for riding an e-bike\'94 INTEGER \{1, 2, 3, 4, 5, 6, 7\}\
+escootpsafe: \'93Perceived safety rate for riding an e-scooter\'94 INTEGER \{1, 2, 3, 4, 5, 6, 7\}\
+walkpsafe: \'93Perceived safety rate for walking\'94 INTEGER \{1, 2, 3, 4, 5, 6, 7\}\
+city: \'93the city of the respondent\'94}

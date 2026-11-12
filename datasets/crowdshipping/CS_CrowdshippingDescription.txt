@@ -1,0 +1,128 @@
+Crowdshipping participation choices
+Transportation and Urban Studio E
+Dataset description | Prepared 10 November 2026
+
+Context
+-------
+This case study examines whether people will deliver parcels as occasional carriers, either during an existing trip or by starting a new trip from home. The data combine stated choices with personal, mobility, shopping and attitudinal information. They support analysis of delivery participation, compensation and travel-time trade-offs. [1, 2]
+
+Data Collection
+---------------
+The online survey was conducted in the Netherlands in July 2022. Recruitment used personal contacts, social media and public flyers; eligibility required residence in the Netherlands and age above 18. Of 298 responses, 250 were completed. The design used two blocks with six tasks per context; public-transport commuters were only offered the home-based experiment. [2]
+
+The local file database_final.csv is semicolon-delimited, with 2,400 choice-situation rows, 61 columns and 250 distinct ID values. Each row records one choice and contains the attributes of the available alternatives. Respondents contribute between 1 and 12 rows; this is an unbalanced panel.
+
+Choice experiments and alternatives
+-----------------------------------
+Context / local condition | Alternatives | Rows
+Commute-based: AV_Trips = 1 | Deliver before the activity; deliver after the activity; do not deliver. | 980
+Home-based: AV_Home = 1, AV_PickUp = 1 | Deliver by bicycle (generic delivery label); stay home. | 1,060
+Home-based: AV_Home = 1, AV_Car = AV_Bike = 1 | Deliver by car; deliver by bicycle; stay home. | 360
+
+The generic home-based delivery response denotes bicycle delivery in the bicycle-only scenario, as clarified by the paper and the local availability pattern. Together, the two bicycle labels account for 534 choices. [2]
+
+Observation identifiers
+-----------------------
+Use (ID, AV_Trips, ChoiceTask) as the local choice-situation key: all 2,400 combinations are unique. ChoiceTask restarts across contexts, so (ID, ChoiceTask) alone is insufficient. Retain ID for panel estimation or respondent-level train/test splits.
+
+
+
+Variables: identifiers, availability and alternatives
+-----------------------------------------------------
+Names below match the CSV exactly. The notation j = 1, 2 covers both Alt1_ and Alt2_ columns. Time is in minutes and monetary attributes are in euros. Structural zeros and the literal text "Not NA" occur in fields outside their applicable context. [1, 2]
+
+Name | Description
+ID | Respondent identifier.
+ChoiceTask | Choice-task number, 1-6 within each context.
+value | Selected alternative, stored as a text label; see the choice-frequency table.
+Block | Experimental design block, 1 or 2.
+AV_Trips / AV_Home | Context indicators: 1 for a commute-based / home-based row, respectively; 0 otherwise.
+AV_Car / AV_Bike | Both equal 1 in home-based rows offering separate car and bicycle options; both are 0 elsewhere. Not general vehicle-ownership indicators.
+AV_PickUp | Equals 1 for the home-based bicycle-only delivery option; 0 elsewhere.
+Base_TT | Reference travel time for the existing trip; 0 outside commute-based rows.
+Car | Commute scenario mode: Bike or Car; Not NA outside commute-based rows.
+Base_Cost_Car | Reference car cost for the existing trip; only substantively relevant to car scenarios.
+Alt1_TOD / Alt2_TOD | Before activity / After activity. These identify the two commute delivery alternatives.
+Altj_parcels | Number of parcels for commute alternative j: 1, 2 or 3.
+Altj_TT | Total travel time for commute alternative j. If modeling extra travel time, derive Altj_TT - Base_TT.
+Altj_PUP | Parcel-locker indicator for commute alternative j: Yes / No.
+Altj_Cost_Car | Car travel cost for commute alternative j; apply only to car scenarios.
+Altj_Rem | Total remuneration for commute alternative j.
+Bike_TT | Travel time for home-based bicycle delivery, including the generic bicycle-only option.
+PUP | Parcel-locker indicator for home-based delivery: Yes / No.
+Rem | Remuneration for home-based delivery.
+Car_TT / Car_Cost | Travel time / cost for the home-based car alternative; structurally 0 where it is unavailable.
+
+
+
+Variables: respondent characteristics
+-------------------------------------
+Name | Description / stored coding
+Age | Age band: 18-24, 25-34, 35-44, 45-54, 55-64 or 65-74.
+Gender | Male; Female; Non-binary / third gender; Prefer not to say.
+Income | Monthly net income band in euros. Stored as category text, from Less than EUR 1,000 to > EUR 5,000. [2]
+Education | Education category: MBO, HAVO, VWO, Bachelor, Master, Doctorate or Other (please state).
+Motive | Main trip purpose: Study, Work, Shopping or Leisure.
+TripFreq | Trip frequency, stored as text categories.
+TripDurat | Trip-duration band in minutes, stored as text.
+TripMode | Reported trip mode: Bicycle, Walking, Public Transport or Car.
+AvailVehic | Reported available vehicle(s): Bicycle, Car, Car,Bicycle or NA. Keep separate from scenario availability.
+ShopFreq | Frequency of online shopping, stored as text.
+ShopExpenditure | Online-shopping expenditure band, in euros. The supplied README does not specify the reference period.
+ShopItem | Type of item purchased online.
+ShopSell / ShopSellItem | Whether the respondent sells online (Yes/No), and item category; NA occurs when not applicable.
+RideHailUse / CSUse | Frequency of ride-hailing / crowdshipping use: Never, Sometimes, Often or Always.
+Attitudinal01 to; Attitudinal16 | Sixteen attitude items concerning the environment and COVID-19. Stored values are 1-5 and 999. The local README does not provide item wording, scale anchors or the meaning of 999.
+
+Preparation notes
+-----------------
+Keep the original strings when importing the file. The separator is a semicolon, while some category values contain commas. "Not NA" and "NA" are literal source values; interpret them by column and experimental context.
+
+Reconstruct availability from the context flags before forming a common alternative set. In particular, AV_Bike = 0 does not mean bicycle delivery is unavailable when AV_PickUp = 1.
+
+Treat 999 as an out-of-scale code pending clarification; exclude or mark it missing in analyses of 1-5 attitudes. Do not infer the meaning or direction of an individual attitude item from its column number.
+
+
+
+Descriptive statistics
+----------------------
+Shares are calculated separately for the two experimental contexts. Each table contains mutually exclusive outcomes and sums to 100.0%. Counts are computed from the local CSV file.
+
+Commute-based choices (980 choice situations)
+
+Outcome | Count | Share
+Deliver before the activity | 280 | 28.6%
+Deliver after the activity | 404 | 41.2%
+Do not deliver | 296 | 30.2%
+Total | 980 | 100.0%
+
+Home-based choices (1,420 choice situations)
+
+Outcome | Count | Share
+Deliver by bicycle | 534 | 37.6%
+Deliver by car | 56 | 3.9%
+Stay home | 830 | 58.5%
+Total | 1,420 | 100.0%
+
+Bicycle delivery combines 441 responses with the generic delivery label (31.1% of home-based choices) and 93 with the explicit bicycle label (6.5%). These are components of the 534 bicycle choices (37.6%), not additional outcomes.
+
+Raw value labels are "Pick Up and delivery the parcels before the activity", "Pick Up and delivery the parcels after the activity", "Do not pick up any parcels", "Pick Up and delivery the parcels", "Pick Up and delivery the parcels by bike", "Pick Up and delivery the parcels by car", and "Stay home and do not pick up any parcels".
+
+Variable / applicable rows | N | Min | Max | Mean | SD
+Base_TT | 980 | 10 | 40 | 19.16 | 11.11
+Alt1_TT | 980 | 15 | 85 | 42.52 | 19.98
+Alt2_TT | 980 | 15 | 85 | 42.24 | 19.46
+Alt1_Rem | 980 | 5 | 21 | 13.92 | 5.17
+Alt2_Rem | 980 | 5 | 21 | 14.39 | 5.91
+Bike_TT | 1,420 | 15 | 40 | 29.37 | 9.65
+Rem | 1,420 | 3 | 45 | 17.45 | 15.17
+
+Statistics exclude structural zeros outside the relevant context; SD is the sample standard deviation. These are task-level summaries, not summaries of independent respondents.
+
+References and sources
+----------------------
+[1] Cebeci, M. S., Tapia, R. J., Nadi, A., de Bok, M. and Tavasszy, L. (2023). Dataset: Does Crowdshipping of Parcels Generate New Passenger Trips? 4TU.ResearchData. Also consult the local TRB_readme.md.https://doi.org/10.4121/614eb537-ff5c-48e9-867d-0b7855a15951
+
+[2] Cebeci et al. (2024; first published online 2023). Does Crowdshipping of Parcels Generate New Passenger Trips? Evidence from the Netherlands. Transportation Research Record, 2678(6).https://doi.org/10.1177/03611981231196149
+
+Source pages checked on 10 November 2026. Counts and descriptive statistics refer to the local CSV files, excluding headers. This teaching description was prepared from the cited sources and local file inspection; it is not an author-supplied codebook.

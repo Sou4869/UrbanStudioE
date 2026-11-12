@@ -1,0 +1,13 @@
+# Preserve the source CSV files exactly, including their recorded line endings.
+*.csv -text
+
+# Treat document, image, archive, and GIS container formats as binary.
+*.pdf binary
+*.png binary
+*.xlsx binary
+*.zip binary
+*.qgz binary
+*.gpkg binary
+*.shp binary
+*.shx binary
+*.dbf binary

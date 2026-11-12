@@ -1,0 +1,123 @@
+Pedestrian route choice in Kannai
+Transportation and Urban Studio E
+Dataset description | Prepared 10 November 2026
+
+Context
+-------
+This case study examines pedestrian route choice in the Kannai city-center street network in Yokohama, Japan. Network length, sidewalk width, crossings and visual streetscape attributes can be used to investigate the trade-offs behind walking routes. The related studies distinguish overall route preferences from responses to locally perceived street attributes. [1, 2]
+
+Data generation and scope
+-------------------------
+The class data contain synthetic chosen paths generated from a model estimated using real pedestrian route observations, as described in the GroupProject teaching material. They provide a network and repeated route choices for estimating and comparing route-choice models.
+
+File / unit of observation | Rows | Columns
+node_kannai.csv: one network node | 724 | 3
+link_kannai.csv: one directed network link | 2,398 | 13
+path_kannai.csv: one simulated chosen path | 1,280 | 6
+
+There are 64 origin-destination (OD) pairs, each with 20 simulated paths, covering eight origins and eight destinations. The 1,280 observations contain 677 distinct node/link sequences. Repeated routes represent repeated choices and should retain their frequencies in estimation.
+
+How the chosen paths are recorded
+---------------------------------
+Each row of path_kannai.csv records a complete route from origin to destination. The following fields describe the observation and its ordered sequence; explanatory attributes for route choice are listed on page 2.
+
+Field | Role in the path record
+path_id | Unique path-observation ID, 0-1279.
+od_id | OD-pair ID, 0-63; 20 observations per pair.
+origin / destination | Origin and destination node identifiers.
+path by node | Ordered node sequence, including both endpoints.
+path by link | Ordered directed-link sequence joining the consecutive nodes.
+
+The two sequence fields are quoted list strings. Read them with a CSV parser and a safe list parser such as Python ast.literal_eval. Preserve the sequence order and path_id. Each local path has one more node than links, and all recorded link directions and endpoints are consistent.
+
+For a path-based MNL, one complete route is an alternative. For recursive logit (RL), a route is represented as successive link choices. The supplements on pages 3-4 explain how to estimate both models using these files.
+
+
+
+Variables: explanatory attributes
+---------------------------------
+File / column | Description / unit
+link: length | Link length in metres. Sum across the links of a route to obtain total walking distance.
+link: sidewalk_width | Sidewalk width in metres; stored values range from 0 to 22.
+link: building / wall /; fence / vegetation /; terrain / sky | Visual streetscape component fractions on a 0-1 scale. The six fields do not cover every image class. They can be used as local link attributes or aggregated into route-level exposure measures.
+link: crosswalk | Crosswalk indicator: 1 for a crosswalk link, 0 otherwise. Summing it along a route counts crosswalk-link traversals.
+node: altitude | Stored node elevation, ranging from 0.5 to 31.8. Verify the elevation units and vertical datum before constructing gradients.
+
+For a path-based model, aggregate link attributes into one vector per route. Examples include total length, the number of crosswalk links, and length-weighted averages of sidewalk width or visual composition. For a directly comparable link-additive MNL/RL specification, use sums of link attributes or exposures, as illustrated on page 3.
+
+Descriptive statistics: chosen paths
+------------------------------------
+Measure | N | Min | Max | Mean | SD
+links | 1,280 | 3 | 41 | 19.28 | 8.64
+length_m | 1,280 | 189.188 | 1929.99 | 1072.56 | 447.77
+
+links is the number of directed links in a path; length_m is their total length in metres. Statistics include all 1,280 simulated choices, including repeated sequences. SD is the sample standard deviation.
+
+Descriptive statistics: network links
+-------------------------------------
+Variable | N | Min | Max | Mean | SD
+length | 2,398 | 2.816 | 297.44 | 58.65 | 35.27
+sidewalk_width | 2,398 | 0 | 22 | 3.61 | 3.21
+building | 2,398 | 0 | 0.884931 | 0.38 | 0.13
+vegetation | 2,398 | 0 | 0.570622 | 0.12 | 0.09
+sky | 2,398 | 0 | 0.384826 | 0.04 | 0.04
+
+These statistics describe all 2,398 directed links, without weighting by route-use frequency. Of these links, 190 (7.92%) are crosswalk links. Network attributes should be distinguished from the attributes of the routes actually chosen.
+
+
+
+Supplement: estimating a path-based MNL
+---------------------------------------
+1. Generate candidate routes. Build a directed graph from link.O and link.D. For each OD pair, generate a set of feasible routes, for example with K-shortest paths or randomized link costs. Include the observed route for each path_id and remove duplicate alternatives within its candidate set. Keep repeated observations as separate choice situations.
+
+2. Construct route attributes. Let L(a) = length(a) / 1,000, in kilometres. For each candidate route r, compute total length L(r) = sum L(a), greenery exposure G(r) = sum [L(a) x vegetation(a)], and crosswalk-link count C(r) = sum crosswalk(a), over its links. These are examples of attributes that are additive across links; further sidewalk or visual attributes can be constructed in the same way.
+
+3. Form the estimation table. Create one row per (path_id, candidate route), attach the route attributes, and mark the observed route with chosen = 1 and the other candidates with chosen = 0. The choice-situation key is path_id; od_id can group observations that share the same endpoints.
+
+4. Specify utility and maximize the likelihood. An example is V(r) = b_L L(r) + b_G G(r) + b_C C(r). With the error scale normalized to one, the MNL probability for observation n is:
+
+P(r | C_n) = exp[V(r)] / sum over q in C_n exp[V(q)]Maximize LL = sum over n log P(r_n | C_n), where r_n is the observed route and C_n its candidate set.
+
+A deterministic generated set gives a model conditional on that set. For sampled alternatives, account for the sampling design when estimating a model over the larger route universe. Report the generation rule and assess sensitivity to the number and variety of candidates. Route overlap can be addressed in an extension such as path-size logit.
+
+Supplement: network structure and visualization
+-----------------------------------------------
+Identifiers and connectivity. node.fid identifies nodes; link.fid identifies directed links. Use path by link to join route sequences to link.fid, and O/D to connect each link to node.fid. Node IDs have gaps, so do not substitute row positions. These fields support joins and network construction.
+
+Geometry. WKT contains point geometry in the node file and line geometry in the link file. Use it, or the shapefile in GIS_kannai, to map the network and highlight observed or generated routes. The GIS projection file specifies WGS 84 longitude/latitude; use a suitable projected CRS for new metric calculations.
+
+Opposite directed links can share the same geometry. Retain their separate link IDs and use O/D to determine direction. Geometry is useful for visualization; the estimation steps above use connectivity, link attributes and route sequences.
+
+
+
+Supplement: estimating recursive logit (RL)
+-------------------------------------------
+RL evaluates routes through destination-specific sequential link-choice probabilities. The following node-state formulation provides a baseline for this dataset; a link-state formulation can additionally represent turn-dependent attributes. [3]
+
+1. Prepare transitions. At node i, the available actions A(i) are the outgoing directed links with O = i. Link a leads to node j(a) = D(a). For each destination d, retain the part of the network that can reach d and make d absorbing. Match every observed transition using the ordered node and link sequences.
+
+2. Specify link utility. Use v(a) = b_L L(a) + b_G L(a) x vegetation(a) + b_C crosswalk(a), with L(a) in kilometres. Summing this utility along a route reproduces the example MNL route utility. A route-level average divided by total route length is not directly link-additive.
+
+3. Solve continuation values. Normalize the error scale to one and set V_d(d) = 0. For each nonterminal node, solve the destination-specific Bellman equation:
+
+V_d(i) = log { sum over a in A(i) exp[v(a) + V_d(j(a))] }
+
+Recompute these values at each parameter trial; this dataset has eight destinations. On a cyclic network, verify that the solution is finite and reject parameter values for which the value-function system is ill-defined.
+
+4. Evaluate the observed paths. The transition probability is:
+
+P(a | i, d) = exp[v(a) + V_d(j(a)) - V_d(i)]The probability of an observed route is the product of these probabilities along its link sequence. Maximize the sum of their logarithms over all transitions of all 1,280 observed paths.
+
+The continuation values must enter estimation; fitting an ordinary logit to local outgoing-link attributes alone does not implement RL. The baseline uses the network directly, without enumerating candidate paths. Finite candidate sets in path-based MNL and the routes admitted by RL can differ. [3]
+
+References and sources
+----------------------
+[1] Oyama, Y. (2024). Global path preference and local response: A reward decomposition approach for network path choice analysis in the presence of visually perceived attributes. Transportation Research Part A: Policy and Practice, 181, 103998.https://doi.org/10.1016/j.tra.2024.103998
+
+[2] Wang, J. and Oyama, Y. (2026). Quantifying willingness-to-walk across varying urban visual contexts using a global-local path choice model. Journal of Transport Geography, 130, 104502.https://doi.org/10.1016/j.jtrangeo.2025.104502
+
+[3] Fosgerau, M., Frejinger, E. and Karlstrom, A. (2013). A link based network route choice model with unrestricted choice set. Transportation Research Part B: Methodological, 56, 70-80.https://doi.org/10.1016/j.trb.2013.07.012
+
+Source pages checked on 10 November 2026. Counts and descriptive statistics refer to the local CSV files, excluding headers. This teaching description was prepared from the cited sources and local file inspection; it is not an author-supplied codebook.
+
+Local teaching sources: GroupProject.pdf / GroupProject.pptx; node_kannai.csv, link_kannai.csv and path_kannai.csv; GIS_kannai/GIS_kannai.prj.

@@ -1,0 +1,30 @@
+# macOS metadata
+.DS_Store
+._*
+
+# Local dependencies and Python caches
+node_modules
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+.aws/
+.ssh/
+
+# Reproducible authoring caches and inspection previews
+work/**/mpl/
+work/**/*_preview.png
+work/**/*_inspect.ndjson
+
+# QGIS backups and transient database files
+*.qgz~
+*.qgs~
+*.gpkg-wal
+*.gpkg-shm
+*.gpkg-journal
+*.log

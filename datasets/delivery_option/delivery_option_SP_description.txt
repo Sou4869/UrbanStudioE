@@ -1,0 +1,85 @@
+Delivery option choice data
+Transportation and Urban Studio E
+Survey conducted in 2021 by Oyama at SIT with Imura and Nishinari at UTokyo and Yamato Holdings
+
+Choice variable:
+    - 1000: Next delivery, 
+    - 2000: Normal delivery,
+    - >= 3000: Scheduled (Specified) delivery
+        - 3021: Scheduled delivery for "2" days after the order date & the "1"st (earliest) time slot
+        - 3022: Scheduled delivery for "2" days after the order date & the "2"nd (other) time slot
+        - 3023: Scheduled delivery for "2" days after the order date & the "3"rd (latest) time slot
+        - 3031: Scheduled delivery for "3" days after the order date & the "1"st (earliest) time slot
+        - ...
+        - 3083: Scheduled delivery for "8" days after the order date & the "3"rd (latest) time slot
+
+
+no: 
+customer number
+
+rp_item_category:
+1 	図書・雑誌
+2 	ソフトウェア　（ゲーム含む）
+3 	パソコン・周辺機器
+4 	食品・飲料・酒類，
+5 	衣類・靴・アクセサリー
+6 	音楽ＣＤ・ビデオソフト
+7 	ギフト
+8 	台所用品・食器・生活雑貨
+9 	玩具・おもちゃ
+10 	家電・ＡＶ機器
+11 	健康・医療関係
+12 	化粧品・美容関係
+13 	事務用品
+14 	インテリア用品
+15 	その他
+16 	特別な配送料がかかるような大型商品以外は、買ったことがない
+17 	配送を伴う商品をオンラインで買ったことはない
+
+rp_item_price
+1 	１，０００円未満
+2 	１，０００～３，０００円未満
+3 	３，０００～５，０００円未満
+4 	５，０００～７，５００円未満
+5 	７，５００～１０，０００円未満
+6 	１０，０００～１５，０００円未満
+7 	１５，０００～２０，０００円未満
+8 	２０，０００～３０，０００円未満
+9 	３０，０００～５０，０００円未満
+10 	５０，０００円以上
+11 	分からない・覚えていない
+
+gender
+1 	男性 Male
+2 	女性 Female
+
+household
+1 	一人暮らし
+2 	夫婦のみ・パートナーのみ（共働き）
+3 	夫婦のみ・パートナーのみ（共働きでない）
+4 	ご自身の子どもと同居
+5 	ご自身の子どもなし、親と同居（就業している親がいる）
+6 	ご自身の子どもなし、親と同居（就業している親はいない）
+7 	ご自身の子ども、親以外の家族と同居（子ども、親はいない）
+8 	知人、友人と同居
+9 	その他
+
+job
+1 	会社勤務（一般社員）
+2 	会社勤務（管理職）
+3 	会社経営（経営者・役員）
+4 	公務員・教職員・非営利団体職員
+5 	派遣社員・契約社員
+6 	自営業（商工サービス）
+7 	ＳＯＨＯ
+8 	農林漁業
+9 	専門職（弁護士・税理士等・医療関連）
+10 	パート・アルバイト
+11 	専業主婦・主夫
+12 	学生
+13 	無職
+14 	その他の職業
+
+
+Other attributes: please refer to Oyama et al. (2024)
+https://doi.org/10.1016/j.jretconser.2024.103711

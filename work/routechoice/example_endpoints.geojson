@@ -1,0 +1,1 @@
+{"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [139.6411732, 35.4408158]}, "properties": {"label": "O", "node_id": 369, "od_id": 56}}, {"type": "Feature", "geometry": {"type": "Point", "coordinates": [139.6353899, 35.4376441]}, "properties": {"label": "D", "node_id": 447, "od_id": 56}}]}

@@ -1,0 +1,128 @@
+First/last-mile mode choice and perceived safety
+Transportation and Urban Studio E
+Dataset description | Prepared 10 November 2026
+
+Context
+-------
+This dataset links perceived road safety to first/last-mile mode choice. Respondents evaluate illustrated road environments for car use, e-bike use, e-scooter use and walking, then select a mode given travel time and cost. It therefore supports both safety-rating models and discrete mode-choice models. [1, 2]
+
+Data Collection
+---------------
+The Zenodo version 2.0 description reports 129 participants in Athens, Greece, and a later addition of 50 participants in Munich, Germany. The accompanying paper describes the original Athens study. Each road scene varies infrastructure and traffic conditions; safety is rated from 1 (very unsafe) to 7 (very safe). [1, 2]
+
+The numbers below are computed from the local files. They differ from the repository's headline totals of 179 recruited participants and 2,060 choices: the local choice file has 173 distinct pid values and 2,059 rows. The supplied files do not establish the reason for every difference; use the local counts when describing an analysis sample.
+
+File / unit of observation | Rows | Columns | People
+choice_dataset_perceivedSafetyChoices_v2.0.csv; One selected mode per choice situation (wide format). | 2,059 | 12 | 173
+rating_dataset_perceivedSafetyChoices_v2.0.csv; One safety rating for one mode and road scene. | 8,171 | 27 | 172
+
+Choice alternatives and time construction
+-----------------------------------------
+Mode | Travel time (minutes) | Travel cost (EUR) | Safety rating
+car | cartime | carcost | carpsafe
+ebike | acttime | ebikecost | ebikepsafe
+escoot / escooter | (4/3) x acttime | escootcost | escootpsafe
+walk | 4 x acttime | 0 | walkpsafe
+
+The time multipliers are specified in the local README. Walking has zero monetary travel cost in the published design. Normalize escooter to escoot when using a common mode code: both labels are present in the local choice and rating files. [2, local README]
+
+Choice tasks and ratings repeat within pid. Neither file includes an explicit scene/task identifier. Do not assume that a row-order join between files aligns scenarios, and do not join all rows on pid alone.
+
+
+
+Variables: choice file
+----------------------
+Name | Description / coding
+pid | Respondent identifier. Use for repeated-choice grouping.
+choice | Selected mode: car, ebike, escoot, escooter or walk. The two scooter spellings denote the same mode.
+cartime | Private-car travel time in minutes; observed levels 5, 20, 40.
+carcost | Private-car travel cost in euros; observed levels 3.5, 5, 6.5. Present in the CSV but omitted from the supplied README dictionary.
+acttime | Base travel time in minutes; observed levels 5, 15, 25. Convert to each non-car mode using the multipliers on page 1.
+ebikecost | Shared e-bike cost in euros. Local levels 1.5, 3, 3.5, 4.5; the value 3.5 occurs in 16 rows.
+escootcost | Shared e-scooter cost in euros; levels 0.5, 2, 3.5.
+carpsafe / ebikepsafe /; escootpsafe / walkpsafe | Mode-specific perceived safety, 1-7. Empty cells are missing, not zero.
+city | Athens or Munich.
+
+Descriptive statistics: choices
+-------------------------------
+Mode (normalized) | Count | Share
+Car | 740 | 35.9%
+E-bike | 589 | 28.6%
+E-scooter | 253 | 12.3%
+Walk | 477 | 23.2%
+Total | 2,059 | 100.0%
+
+E-scooter combines 182 rows labeled escoot and 71 labeled escooter. Shares are based on choice situations.
+
+Variable | N | Min | Max | Mean | SD
+cartime | 2,059 | 5 | 40 | 22.09 | 14.44
+carcost | 2,059 | 3.5 | 6.5 | 4.99 | 1.22
+acttime | 2,059 | 5 | 25 | 14.83 | 8.16
+ebikecost | 2,059 | 1.5 | 4.5 | 2.97 | 1.22
+escootcost | 2,059 | 0.5 | 3.5 | 1.99 | 1.23
+carpsafe | 2,040 | 1 | 7 | 5.07 | 1.49
+ebikepsafe | 2,045 | 1 | 7 | 3.65 | 1.78
+escootpsafe | 2,033 | 1 | 7 | 3.25 | 1.78
+walkpsafe | 2,044 | 1 | 7 | 5.27 | 1.60
+
+N excludes empty values. SD is the sample standard deviation. These summaries are at the choice-situation level.
+
+
+
+Variables: rating file
+----------------------
+The following coding follows the local README unless a discrepancy is explicitly identified. Multi-column entries cover every listed field.
+
+Name | Description / coding
+pid / city | Respondent ID / survey city (Athens or Munich).
+tmode / psafe | Evaluated mode / safety rating from 1 (very unsafe) to 7 (very safe). Normalize escooter and escoot.
+type | Infrastructure: 1 = one-way urban road, 50 km/h, no cycle lane, sidewalk <1.5 m; 2 = same with sidewalk >=1.5 m; 3 = one-way urban road, 50 km/h, with cycle lane; 4 = shared space, 30 km/h.
+pav | Pavement: 0 = bad condition; 1 = good condition.
+obst | Obstacles: 0 = absent; 1 = many. Called obstacles in the README.
+cross | Crossings: 0 = no zebra crossing/road markings; 1 = zebra crossing without signals; 2 = signal-controlled zebra crossing.
+veh / bike | Motorized-vehicle / two-wheeler density. README units: vehicles or bikes per km per lane; the paper describes densities per direction. Preserve this source distinction.
+ped | Number of pedestrians in the illustrated 3,500 m² road environment.
+type1 to type4 | Indicators for the corresponding type category.
+cross1 / cross2 | Intended indicators for cross = 1 / cross = 2. cross2 contains 68 values equal to 2; see preparation notes.
+gender | 0 = male; 1 = female.
+age | Categorical age code, observed values 1-5. Exact label mapping is unresolved: the README duplicates code 3 and its labels do not align cleanly with young. Do not read this as age in years.
+education | 0 = none; 1 = primary; 2 = secondary; 3 = higher education; 4 = master. Observed: 2, 3, 4.
+employment | 0 = inactive; 1 = student; 2 = unemployed; 3 = active.
+income | Monthly income: 0 = none; 1 = <EUR 750; 2 = EUR 750-1500; 3 = EUR 1500-2500; 4 = >=EUR 2500. Empty values are missing.
+car_own / moto_own /; cycle_own / escoot_own | Ownership indicators (0 = none, 1 = at least one): car; motorcycle; bicycle/e-bike; e-scooter, respectively.
+young | Binary age-group indicator: 1 = younger than 30 per README; 0 otherwise. Validate against the survey before reconstructing it from age.
+
+Rating summary
+--------------
+Normalized mode | Ratings | Mean psafe
+car | 2043 | 5.06
+ebike | 2047 | 3.65
+escoot | 2035 | 3.25
+walk | 2046 | 5.27
+
+
+
+Data checks and preparation notes
+---------------------------------
+City | Choice rows / people | Rating rows / people
+Athens | 1,459 / 123 | 5,771 / 122
+Munich | 600 / 50 | 2,400 / 50
+Total | 2,059 / 173 | 8,171 / 172
+
+Panel coverage. In the choice file, 166 respondents have 12 rows, six have 11 and one has one. In the rating file, 160 have 48 rows and 12 have fewer. The files share 172 IDs. A respondent-level covariate table can be linked by pid after checking within-person consistency; a scene-level merge requires a validated scenario key.
+
+Missing values. The choice file contains 19 missing carpsafe, 14 ebikepsafe, 26 escootpsafe and 15 walkpsafe cells. The rating file has 445 rows with missing income. Choose and report a missing-data rule; these counts are cells/rows, not necessarily distinct respondents.
+
+Crossing indicators. The local cross2 column contains 68 values of 2 where cross = 2. To obtain a binary design indicator, derive cross2_clean = 1 if cross == 2 and 0 otherwise. Keep the original column and document the change. The supplied README also repeats the name cross1 for the second crossing indicator.
+
+Age labels. The README lists 1: <18, 2: 18-30, 3: 31-40, 3: 41-50, 5: 50-65, 6: 65+. It therefore gives two meanings to code 3 and no meaning to code 4. In the CSV, young is 1 for all age = 1 rows and mixed for age = 2. Do not silently repair these categories by guessing; retain age as an unlabeled category or obtain clarification.
+
+Version scope. The original paper reports the Athens study; Zenodo v2.0 adds Munich. Published sample totals and results need not match a model estimated on these local files. The 16 e-bike-cost values of 3.5 are reported as observed, without silently replacing them.
+
+References and sources
+----------------------
+[1] Tzouras, P. G. (2025). Perceived safety and first/last mile mode choices. A dataset from image-based double stated preferences experiments, version 2.0. Zenodo. Variable definitions: local README_perceivedSafetyChoices_v2.0.rtf.https://doi.org/10.5281/zenodo.17779261
+
+[2] Tzouras, P. G., Pastia, V., Kaparias, I. and Kepaptsoglou, K. (2025; online 2024). Exploring the effect of perceived safety in first/last mile mode choices. Transportation, 52, 2145-2183.https://doi.org/10.1007/s11116-024-10487-4
+
+Source pages checked on 10 November 2026. Counts and descriptive statistics refer to the local CSV files, excluding headers. This teaching description was prepared from the cited sources and local file inspection; it is not an author-supplied codebook.
