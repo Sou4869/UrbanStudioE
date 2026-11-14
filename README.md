@@ -1,5 +1,29 @@
 # UrbanStudioE
 
+関内地区の経路選択データを用いた、交通・都市計画の演習プロジェクトです。授業用の合成データを使い、選択された経路と最短経路の違いや、緑の見え方・歩道幅などの街路属性の関係を、PythonとQGISで分析しています。
+
+## 担当範囲
+
+本澤 聡一郎（[Sou4869](https://github.com/Sou4869)）が、分析方針の検討からコード作成、結果の検証、可視化・資料整理まで全体を担当しています。データセットと元のQGISプロジェクトは提供資料を使用しています。
+
+- **分析方針の検討**：選択経路と最短経路を比較する指標を整理し、経路長、緑・空の可視率、歩道幅、横断歩道の通過数を分析対象にしました。
+- **アルゴリズムと分析コードの実装**：道路を有向グラフとして扱う最短経路計算、経路長で重み付けした街路属性の集計、OD（出発地・目的地の組）ごとの比較、相関・多重共線性の診断をPythonで実装しています。
+- **データと計算結果の検証**：道路・経路データの接続関係や値の範囲を検査し、集計値の照合や別の計算方法との比較を組み込みました。同じ経路が複数回選ばれた頻度を保持しつつ、経路の重複を除いた場合の結果も確認しています。
+- **可視化と再実行手順の整備**：地図・グラフ・CSV・Excel形式で結果を整理し、使用データ、計算方法、単位、実行コマンドを記録しています。
+
+開発には生成AIの支援も利用しています。分析方針の決定と、コードの内容・出力結果の確認は自身で行っています。
+
+## 使用技術と主な成果物
+
+Python（NumPy、Matplotlib）、QGIS、JavaScript／Node.jsを使用しています。
+
+- [選択経路と最短経路の比較](work/routechoice/analyze_step1.py)
+- [街路属性の相関・多重共線性の分析](work/routechoice/analyze_step2.py)
+- [地図・QGIS出力の作成](work/routechoice/build_maps.py)
+- [分析結果と図表](outputs/routechoice/)
+
+現時点の成果は、合成データに対する経路比較と記述的な統計分析です。歩行者の選好や因果関係を推定した結果ではありません。以下に、分析結果と再実行方法の詳細を記載します。
+
 Kannai route-choice data, QGIS projects, and reproducible analyses for Transportation and Urban Studio E.
 
 ## Project structure
@@ -72,3 +96,4 @@ Dependencies are the same as for Step 1. Methods, exposure units, screening flag
 Consult the dataset description in `datasets/routechoice/` for provenance and interpretation. Referenced papers and datasets retain their original authorship and applicable terms.
 
 Local dependencies, caches, temporary inspection files, and operating-system metadata are excluded through `.gitignore`. Analysis results are tracked alongside the code.
+
